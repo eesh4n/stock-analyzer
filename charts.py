@@ -1,8 +1,9 @@
 import streamlit as st
 import plotly.graph_objects as go
 from main import run
+from sentiment import get_average_polarity
 
-st.set_page_config(page_title="Stock Analyzer", layout="wide")
+st.set_page_config(page_title = "Stock Analyzer", layout = "wide")
 
 df, ticker, beta, rsi_val, price, yearly_high, yearly_low, distance_from_high, fund_df, pe_ratio, marketCap = run()
 
@@ -22,10 +23,9 @@ st.divider()
 # --- Second Metrics Row ---
 col6, col7, col8, col9 = st.columns(4)
 col6.metric("RSI (14)", f"{rsi_val:.2f}")
-col7.metric("Beta", f"{beta:.4f}")
+col7.metric("Beta", f"{beta:.2f}")
 col8.metric("PE Ratio", f"{pe_ratio:.2f}")
-col9.metric("Market Cap", f"{marketCap}")
-
+col9.metric("Market Cap", f"${marketCap/1e12:.3f}T")
 st.divider()
 
 # --- Price Chart ---
@@ -33,25 +33,25 @@ st.subheader("Price vs. Moving Averages")
 fig = go.Figure()
 
 fig.add_trace(go.Scatter(
-    x=df["Date"], y=df["Close"],
-    name="Close", line=dict(color="white", width=2)
+    x = df["Date"], y = df["Close"],
+    name = "Close", line = dict(color = "white", width = 2)
 ))
 fig.add_trace(go.Scatter(
-    x=df["Date"], y=df["50MA"],
-    name="50 Day MA", line=dict(color="orange", width=1.5)
+    x = df["Date"], y = df["50MA"],
+    name = "50 Day MA", line = dict(color = "orange", width = 1.5)
 ))
 fig.add_trace(go.Scatter(
-    x=df["Date"], y=df["200MA"],
-    name="200 Day MA", line=dict(color="blue", width=1.5)
+    x = df["Date"], y = df["200MA"],
+    name = "200 Day MA", line = dict(color = "blue", width = 1.5)
 ))
 
 fig.update_layout(
-    template="plotly_dark",
-    hovermode="x unified",
-    height=500,
-    margin=dict(l=0, r=0, t=0, b=0)
+    template = "plotly_dark",
+    hovermode = "x unified",
+    height = 500,
+    margin = dict(l = 0, r = 0, t = 0, b = 0)
 )
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width = "stretch")
 
 st.divider()
 
@@ -64,7 +64,7 @@ fig_rsi.add_trace(go.Scatter(
     x = df["Date"], 
     y = df["RSI"],
     name = "RSI", 
-    line = dict(color="purple", width=1),
+    line = dict(color = "purple", width = 1),
     yaxis = "y",
 ))
 
@@ -72,18 +72,18 @@ fig_rsi.add_trace(go.Scatter(
     x = df["Date"], 
     y = df["Close"],
     name = "Close", 
-    line=dict(color="white", width=1),
+    line = dict(color = "white", width = 1),
     yaxis = "y2",
  ))
 
 # rsi levels
-fig_rsi.add_hline(y=70, line_dash="dash", line_color="red", annotation_text="Overbought")
-fig_rsi.add_hline(y=30, line_dash="dash", line_color="green", annotation_text="Oversold")
+fig_rsi.add_hline(y = 70, line_dash = "dash", line_color = "red", annotation_text = "Overbought")
+fig_rsi.add_hline(y = 30, line_dash = "dash", line_color = "green", annotation_text = "Oversold")
 
 fig_rsi.update_layout(
-    template="plotly_dark",
-    height=500,
-    margin=dict(l=0, r=0, t=0, b=0),
+    template = "plotly_dark",
+    height = 500,
+    margin = dict(l = 0, r = 0, t = 0, b = 0),
 
     yaxis = dict(
         title = "RSI",
@@ -112,14 +112,13 @@ st.dataframe(
         "NetIncome": lambda x: f"{x/1e9:.2f}B",
         "EPS": "${:.2f}",
     })
-)
+)   
 
-# Earnings Chart YoY
+# --- Earnings & Revenue YoY Chart ---
 st.divider()
 
 fig_yoy = go.Figure()
 
-# --- Earnings & Revenue YoY Chart ---
 st.subheader("Earnings & Revenue YoY")
 
 fig_yoy = go.Figure()
@@ -145,4 +144,16 @@ fig_yoy.update_layout(
     yaxis=dict(title="YoY"),
 )
 
-st.plotly_chart(fig_yoy, use_container_width=True)
+st.plotly_chart(fig_yoy, width = "stretch")
+
+# --- Sentiment Analyzer ---
+st.divider()
+
+avg_polarity = get_average_polarity(ticker)
+
+if avg_polarity is None:
+    pass
+elif avg_polarity:
+    st.success(f"Stock has positive sentiment within the recent news. The average polarity within the 20 most recent articles is {avg_polarity:.2f}.")
+else:
+    st.warning(f"Stock has negative sentiment within the recent news. The average polarity within the 20 most recent articles is {avg_polarity:.2f}.")

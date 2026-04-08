@@ -8,7 +8,7 @@ import streamlit as st
 def get_stock_data():
 
     ticker = st.text_input("Enter stock ticker: ").upper()
-    period = st.text_input("Enter time period: ").lower()
+    period = st.text_input("Enter time period: (1y, 1mo, 3mo, etc.) ").lower()
 
     if ticker == "":
         st.stop()
@@ -47,8 +47,8 @@ def rsi(df, length=14):
 
 # use wilder's smoothing instead of normal rolling mean - gives more weight to recent days and less weight to older days
 
-    avg_gain = gain.ewm(com=length-1, min_periods=length).mean()
-    avg_loss = loss.abs().ewm(com=length-1, min_periods=length).mean()
+    avg_gain = gain.ewm(com = length - 1, min_periods = length).mean()
+    avg_loss = loss.abs().ewm(com = length - 1, min_periods = length).mean()
 
     rs = avg_gain / avg_loss
 
@@ -76,9 +76,6 @@ def distance_yearly_high(df, ticker):
     yearly_high, yearly_low = yearly_hl(df, ticker)
     distance_from_high = ((df["Close"].iloc[-1] - yearly_high) / yearly_high) * 100
     return distance_from_high
-
-import yfinance as yf
-import pandas as pd
 
 def fundamentals_df(ticker):
     stock = yf.Ticker(ticker)
