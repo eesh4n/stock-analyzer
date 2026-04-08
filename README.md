@@ -78,7 +78,11 @@ stock_analyzer/
 
 ## 📸 Screenshots
 
-*Add screenshots of your dashboard here*
+<img width="1906" height="718" alt="image" src="https://github.com/user-attachments/assets/a004d5a4-4222-42e7-afa7-d251d0ff4095" />
+<img width="1823" height="713" alt="image" src="https://github.com/user-attachments/assets/7b78a7a1-f22f-4b26-a5ea-464515487832" />
+<img width="1871" height="672" alt="image" src="https://github.com/user-attachments/assets/bdb32472-41cc-47b0-8a39-766c9bb920dd" />
+
+
 
 ---
 
