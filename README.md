@@ -6,7 +6,7 @@ A Python-based stock analysis dashboard built with Streamlit that pulls real mar
 
 ## 🔗 Live Demo
 
-[Click here to open the app]([(https://stock-analyzer-3fmqr3x58vkvgm37enntao.streamlit.app/)])
+https://stock-analyzer-3fmqr3x58vkvgm37enntao.streamlit.app/
 
 ---
 
